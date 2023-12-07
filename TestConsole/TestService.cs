@@ -4,9 +4,9 @@ namespace TestConsole;
 
 public class TestService : ITestService
 {
-    private readonly ITokenProvider<TestService> _tokenProvider;
+    private readonly ITokenProvider<ITestService> _tokenProvider;
 
-    public TestService(ITokenProvider<TestService> tokenProvider)
+    public TestService(ITokenProvider<ITestService> tokenProvider)
     {
         _tokenProvider = tokenProvider;
     }

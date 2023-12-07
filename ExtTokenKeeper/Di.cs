@@ -9,6 +9,6 @@ public static class Di
     /// </summary>
     public static IServiceCollection UseExternalTokenKeeper(this IServiceCollection services)
         => services
-            .AddScoped<ITokenKeeper, TokenKeeper>()
+            .AddSingleton<ITokenKeeper, TokenKeeper>()
             .AddScoped(typeof(ITokenProvider<>), typeof(TokenProvider<>));
 }

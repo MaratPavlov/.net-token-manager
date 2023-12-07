@@ -11,6 +11,6 @@ public class TokenProvider<TService> : ITokenProvider<TService> where TService :
 
     public string GetToken()
     {
-        return _tokenKeeper.GetTokenFor();
+        return TokenKeeper.GetTokenFor<TService>();
     }
 }
