@@ -7,7 +7,8 @@ public class TokenKeeper : ITokenKeeper
 {
     private static readonly List<ServiceTokenRecord> _storage = new();
 
-    public void AddTokenFor<TService>(Func<string> getTokenFunc, Func<string>? refreshTokenFunc, TimeSpan? lifetime) where TService : class
+    public void AddTokenFor<TService>(Func<TokenWithRefresh> getTokenFunc, Func<string, TokenWithRefresh>? refreshTokenFunc, TimeSpan? lifetime)
+        where TService : class
     {
         if (_storage.Any(x => x.ServiceType == typeof(TService)))
             throw new ServiceAlreadyRegisteredException(typeof(TService));
@@ -15,8 +16,8 @@ public class TokenKeeper : ITokenKeeper
         if (lifetime.HasValue)
             dueDate = DateTime.Now + lifetime.Value;
 
-        var token = GetTokenInternal(getTokenFunc);
-        var newRecord = new ServiceTokenRecord(typeof(TService), token, refreshTokenFunc, dueDate, lifetime);
+        var tokenWithRefresh = GetTokenInternal(getTokenFunc);
+        var newRecord = new ServiceTokenRecord(typeof(TService), tokenWithRefresh, refreshTokenFunc, dueDate, lifetime);
         _storage.Add(newRecord);
     }
 
@@ -30,23 +31,25 @@ public class TokenKeeper : ITokenKeeper
         // check for date
         var now = DateTime.Now;
         if (record.DueDate > now)
-            return record.Token;
+            return record.TokenWithRefresh.Token;
 
         if (record.RefreshTokenFunc is null)
             throw new ArgumentNullException(nameof(record.RefreshTokenFunc), "Refresh function must be passed if lifetime exists");
+        if (record.TokenWithRefresh.RefreshToken is null)
+            throw new ArgumentNullException(nameof(record.RefreshTokenFunc), "Refresh token can not be null");
 
-        var newToken = GetTokenInternal(record.RefreshTokenFunc);
-        var newRecord = record with { Token = newToken };
+        var newToken = RefreshTokenInternal(record.RefreshTokenFunc, record.TokenWithRefresh.RefreshToken);
+        var newRecord = record with { TokenWithRefresh = newToken };
         if (record.Lifetime.HasValue)
             newRecord = newRecord with { DueDate = now + record.Lifetime.Value };
         _storage.Remove(record);
         _storage.Add(newRecord);
-        return newRecord.Token;
+        return newRecord.TokenWithRefresh.Token;
     }
 
-    private static string GetTokenInternal(Func<string> getTokenFunc)
+    private static TokenWithRefresh GetTokenInternal(Func<TokenWithRefresh> getTokenFunc)
     {
-        string token;
+        TokenWithRefresh token;
         try
         {
             token = getTokenFunc();
@@ -54,6 +57,21 @@ public class TokenKeeper : ITokenKeeper
         catch (Exception e)
         {
             throw new CantGetTokenException("Can`t get initial token", e);
+        }
+
+        return token;
+    }
+
+    private static TokenWithRefresh RefreshTokenInternal(Func<string, TokenWithRefresh> getTokenFunc, string refreshToken)
+    {
+        TokenWithRefresh token;
+        try
+        {
+            token = getTokenFunc(refreshToken);
+        }
+        catch (Exception e)
+        {
+            throw new CantGetTokenException("Can`t refresh token", e);
         }
 
         return token;

@@ -1,8 +1,8 @@
 namespace ExtTokenKeeper.Model;
 
-public record ServiceTokenRecord(
+internal record ServiceTokenRecord(
     Type ServiceType,
-    string Token,
-    Func<string>? RefreshTokenFunc,
+    TokenWithRefresh TokenWithRefresh,
+    Func<string, TokenWithRefresh>? RefreshTokenFunc,
     DateTime? DueDate,
     TimeSpan? Lifetime);
