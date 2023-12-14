@@ -11,7 +11,6 @@
         <PackageId>ExtTokenManager</PackageId>
         <Version>1.0.1</Version>
         <Authors>https://github.com/MaratPavlov</Authors>
-        <PackageIcon>icon.png</PackageIcon>
         <PackageTags>Token, Refresh, Storage</PackageTags>
         <Description>A simple method to store, retrieve, and refresh tokens for external services.</Description>
         <PackageProjectUrl>https://github.com/MaratPavlov/ExtTokenManager</PackageProjectUrl>
