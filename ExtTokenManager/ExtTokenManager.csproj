@@ -5,10 +5,19 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <WarningsAsErrors>true</WarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <PackageId>ExtTokenManager</PackageId>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <Authors>https://github.com/MaratPavlov</Authors>
-        <Description>Allows configuring the token acquisition and refresh mechanism for external services in one place.</Description>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageTags>Token, Refresh, Storage</PackageTags>
+        <Description>A simple method to store, retrieve, and refresh tokens for external services.</Description>
+        <PackageProjectUrl>https://github.com/MaratPavlov/ExtTokenManager</PackageProjectUrl>
+        <RepositoryType>git</RepositoryType>
+        <licenses>https://opensource.org/licenses/MIT</licenses>
+        <RepositoryUrl>https://github.com/MaratPavlov/ExtTokenManager</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
