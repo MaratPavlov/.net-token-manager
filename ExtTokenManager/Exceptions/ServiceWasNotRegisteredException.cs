@@ -1,4 +1,4 @@
-namespace ExtTokenKeeper.Exceptions;
+namespace ExtTokenManager.Exceptions;
 
 public class ServiceWasNotRegisteredException : Exception
 {

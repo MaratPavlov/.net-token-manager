@@ -1,30 +1,48 @@
-using ExtTokenKeeper.Exceptions;
-using ExtTokenKeeper.Model;
+using ExtTokenManager.Exceptions;
+using ExtTokenManager.Model;
 
-namespace ExtTokenKeeper;
+namespace ExtTokenManager;
 
-public class TokenKeeper : ITokenKeeper
+/// <inheritdoc />
+public class TokenAccessor : ITokenAccessor
 {
-    private static readonly List<ServiceTokenRecord> _storage = new();
+    private static readonly List<ServiceTokenRecord> Storage = new();
 
-    public void AddTokenFor<TService>(Func<TokenWithRefresh> getTokenFunc, Func<string, TokenWithRefresh>? refreshTokenFunc, TimeSpan? lifetime)
-        where TService : class
+    /// <inheritdoc />
+    public void AddTokenFor<TService>(
+        Func<TokenWithRefresh> getTokenFunc,
+        Func<string, TokenWithRefresh>? refreshTokenFunc,
+        TimeSpan? lifetime) where TService : class
     {
-        if (_storage.Any(x => x.ServiceType == typeof(TService)))
+        if (Storage.Any(x => x.ServiceType == typeof(TService)))
             throw new ServiceAlreadyRegisteredException(typeof(TService));
         DateTime? dueDate = null;
         if (lifetime.HasValue)
             dueDate = DateTime.Now + lifetime.Value;
 
         var tokenWithRefresh = GetTokenInternal(getTokenFunc);
-        var newRecord = new ServiceTokenRecord(typeof(TService), tokenWithRefresh, refreshTokenFunc, dueDate, lifetime);
-        _storage.Add(newRecord);
+        var newRecord = new ServiceTokenRecord(
+            typeof(TService),
+            tokenWithRefresh,
+            refreshTokenFunc,
+            dueDate,
+            lifetime);
+        Storage.Add(newRecord);
+    }
+
+    /// <inheritdoc />
+    public void AddTokenFor<TService>(ExternalTokenConfiguration configuration) where TService : class
+    {
+        AddTokenFor<TService>(
+            configuration.GetTokenFunc,
+            configuration.RefreshTokenFunc,
+            configuration.Lifetime);
     }
 
     internal static string GetTokenFor<TService>()
     {
         // get record
-        var record = _storage.FirstOrDefault(x => x.ServiceType == typeof(TService));
+        var record = Storage.FirstOrDefault(x => x.ServiceType == typeof(TService));
         if (record is null)
             throw new ServiceWasNotRegisteredException(typeof(TService));
 
@@ -42,8 +60,8 @@ public class TokenKeeper : ITokenKeeper
         var newRecord = record with { TokenWithRefresh = newToken };
         if (record.Lifetime.HasValue)
             newRecord = newRecord with { DueDate = now + record.Lifetime.Value };
-        _storage.Remove(record);
-        _storage.Add(newRecord);
+        Storage.Remove(record);
+        Storage.Add(newRecord);
         return newRecord.TokenWithRefresh.Token;
     }
 

@@ -1,4 +1,4 @@
-namespace ExtTokenKeeper.Model;
+namespace ExtTokenManager.Model;
 
 internal record ServiceTokenRecord(
     Type ServiceType,

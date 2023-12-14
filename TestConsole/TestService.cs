@@ -1,4 +1,4 @@
-using ExtTokenKeeper;
+using ExtTokenManager;
 
 namespace TestConsole;
 

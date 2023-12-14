@@ -1,9 +1,11 @@
-namespace ExtTokenKeeper;
+namespace ExtTokenManager;
 
+/// <inheritdoc />
 public class TokenProvider<TService> : ITokenProvider<TService> where TService : class
 {
+    /// <inheritdoc />
     public string GetToken()
     {
-        return TokenKeeper.GetTokenFor<TService>();
+        return TokenAccessor.GetTokenFor<TService>();
     }
 }

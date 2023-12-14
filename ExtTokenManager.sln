@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtTokenKeeper", "ExtTokenKeeper\ExtTokenKeeper.csproj", "{B08F9E3B-F6BE-47DF-908C-201F0A7C7E72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtTokenManager", "ExtTokenManager\ExtTokenManager.csproj", "{B08F9E3B-F6BE-47DF-908C-201F0A7C7E72}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{1C8EAB93-10EF-43AA-A211-012A96BCBBAF}"
 EndProject
