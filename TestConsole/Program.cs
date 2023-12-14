@@ -11,19 +11,22 @@ services
 await using var provider = services.BuildServiceProvider();
 await using var scope = provider.CreateAsyncScope();
 
-var keeper = scope.ServiceProvider.GetRequiredService<ITokenAccessor>();
+var tokenAccessor = scope.ServiceProvider.GetRequiredService<ITokenAccessor>();
 
 var refreshTokenBuilder = new StringBuilder();
 refreshTokenBuilder.Append("init_refresh_token_");
 
-keeper.AddTokenFor<ITestService>(
+tokenAccessor.AddTokenFor<ITestService>(
+    // get token function
     () => new TokenWithRefresh(TokenGenerator.GenerateToken(), TokenGenerator.GenerateToken()),
+    // refresh token function
     refreshToken =>
     {
         refreshTokenBuilder.Append("test");
         refreshTokenBuilder.Append(refreshToken);
         return new TokenWithRefresh(refreshTokenBuilder.ToString(), refreshToken);
     },
+    // lifespan of token
     TimeSpan.FromSeconds(3));
 
 var testService = scope.ServiceProvider.GetRequiredService<ITestService>();
