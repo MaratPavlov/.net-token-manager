@@ -53,6 +53,11 @@ public TestService(ITokenProvider<ITestService> tokenProvider)
 var token = _tokenProvider.GetToken();
 ```
 
+### Sometimes you want to force refresh
+```csharp
+var token = _tokenProvider.RefreshNowAndGetToken();
+```
+
 # Contribution
 
 If you have any questions, comments, or suggestions, please open an issue or create a pull request 🙂

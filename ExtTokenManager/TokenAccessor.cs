@@ -39,7 +39,7 @@ public class TokenAccessor : ITokenAccessor
             configuration.Lifetime);
     }
 
-    internal static string GetTokenFor<TService>()
+    internal static string GetTokenFor<TService>(bool forceUpdate = false)
     {
         // get record
         var record = Storage.FirstOrDefault(x => x.ServiceType == typeof(TService));
@@ -48,7 +48,7 @@ public class TokenAccessor : ITokenAccessor
 
         // check for date
         var now = DateTime.Now;
-        if (record.DueDate > now)
+        if (record.DueDate > now && forceUpdate == false)
             return record.TokenWithRefresh.Token;
 
         if (record.RefreshTokenFunc is null)

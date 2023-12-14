@@ -13,6 +13,7 @@ public class TestService : ITestService
 
     public string Test()
     {
+        _tokenProvider.RefreshNowAndGetToken();
         return _tokenProvider.GetToken();
     }
 }

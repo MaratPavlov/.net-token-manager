@@ -11,4 +11,10 @@ public interface ITokenProvider<TService>
     /// </summary>
     /// <returns>The token</returns>
     string GetToken();
+
+    /// <summary>
+    /// Issuance with force refresh.
+    /// </summary>
+    /// <returns>The token</returns>
+    string RefreshNowAndGetToken();
 }
