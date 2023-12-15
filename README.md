@@ -1,4 +1,4 @@
-[![NuGet](https://img.shields.io/nuget/v/ExtTokenManager.svg)](https://www.nuget.org/packages/ExtTokenManager) [![Build](https://github.com/maratpavlov/exttokenmanager/actions/workflows/dotnet.yml/badge.svg)](https://github.com/maratpavlov/exttokenmanager/actions/workflows/dotnet.yml)
+[![NuGet](https://img.shields.io/nuget/v/ExtTokenManager.svg)](https://www.nuget.org/packages/ExtTokenManager) [![Build](https://github.com/maratpavlov/exttokenmanager/actions/workflows/build.yml/badge.svg)](https://github.com/maratpavlov/exttokenmanager/actions/workflows/build.yml)
 
 ### A simple method to store, retrieve, and refresh tokens for external services.
 

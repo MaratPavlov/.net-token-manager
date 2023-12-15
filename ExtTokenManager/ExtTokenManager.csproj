@@ -17,6 +17,7 @@
         <RepositoryType>git</RepositoryType>
         <licenses>https://opensource.org/licenses/MIT</licenses>
         <RepositoryUrl>https://github.com/MaratPavlov/ExtTokenManager</RepositoryUrl>
+        <PackageOutputPath>../artifacts/</PackageOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
