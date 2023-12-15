@@ -3,7 +3,7 @@ name: deploy to nuget
 on:
   push:
     branches: [ "main" ]
-    paths: "ExtTokenManager/**" 
+    paths: "src/**" 
 
 jobs:
   publish:

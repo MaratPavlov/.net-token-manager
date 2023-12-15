@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ExtTokenManager\ExtTokenManager.csproj" />
+      <ProjectReference Include="..\src\ExtTokenManager\ExtTokenManager.csproj" />
     </ItemGroup>
 
     <ItemGroup>
