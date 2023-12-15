@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <PackageId>ExtTokenManager</PackageId>
-        <Version>1.0.4</Version>
+        <Version>1.0.5</Version>
         <Authors>https://github.com/MaratPavlov</Authors>
         <PackageTags>Token, Refresh, Storage</PackageTags>
         <Description>A simple method to store, retrieve, and refresh tokens for external services.</Description>
