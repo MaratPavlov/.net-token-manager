@@ -17,7 +17,7 @@ jobs:
           dotnet-version: 6.0.x
           
       - name: Pack
-        run: dotnet pack -c Release ExtTokenManager/ExtTokenManager.csproj
+        run: dotnet pack -c Release src/ExtTokenManager.csproj
         
       - name: Publish
         run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
