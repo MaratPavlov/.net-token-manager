@@ -2,7 +2,7 @@
 using ExtTokenManager;
 using ExtTokenManager.Model;
 using Microsoft.Extensions.DependencyInjection;
-using TestConsole;
+using Demo;
 
 var services = new ServiceCollection();
 services

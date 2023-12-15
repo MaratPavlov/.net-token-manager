@@ -1,4 +1,4 @@
-namespace TestConsole;
+namespace Demo;
 
 public interface ITestService
 {

@@ -1,6 +1,6 @@
 using ExtTokenManager;
 
-namespace TestConsole;
+namespace Demo;
 
 public class TestService : ITestService
 {

@@ -9,12 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\ExtTokenManager\ExtTokenManager.csproj" />
       <ProjectReference Include="..\src\ExtTokenManager.csproj" />
       <ProjectReference Include="..\src\ExtTokenManager\ExtTokenManager.csproj" />
