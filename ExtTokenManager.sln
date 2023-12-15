@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{1C8EAB93-10EF-43AA-A211-012A96BCBBAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtTokenManager", "src\ExtTokenManager\ExtTokenManager.csproj", "{5679704D-499A-4E02-89DE-0DF1FAF85383}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtTokenManager", "src\ExtTokenManager.csproj", "{52CB4F99-3AA4-4DC8-95F5-6D2AE4593561}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,9 +14,9 @@ Global
 		{1C8EAB93-10EF-43AA-A211-012A96BCBBAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C8EAB93-10EF-43AA-A211-012A96BCBBAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C8EAB93-10EF-43AA-A211-012A96BCBBAF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5679704D-499A-4E02-89DE-0DF1FAF85383}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5679704D-499A-4E02-89DE-0DF1FAF85383}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5679704D-499A-4E02-89DE-0DF1FAF85383}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5679704D-499A-4E02-89DE-0DF1FAF85383}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52CB4F99-3AA4-4DC8-95F5-6D2AE4593561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52CB4F99-3AA4-4DC8-95F5-6D2AE4593561}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52CB4F99-3AA4-4DC8-95F5-6D2AE4593561}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52CB4F99-3AA4-4DC8-95F5-6D2AE4593561}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
