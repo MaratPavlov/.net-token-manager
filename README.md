@@ -65,7 +65,7 @@ var token = _tokenProvider.GetToken();
 var token = _tokenProvider.RefreshNowAndGetToken();
 ```
 
-See full [Demo](https://github.com/MaratPavlov/ExtTokenManager/tree/main/Demo)
+See full [Demo project](https://github.com/MaratPavlov/ExtTokenManager/tree/main/Demo)
 
 # Contribution
 

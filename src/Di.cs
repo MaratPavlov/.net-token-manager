@@ -11,4 +11,7 @@ public static class Di
         => services
             .AddSingleton<ITokenAccessor, TokenAccessor>()
             .AddScoped(typeof(ITokenProvider<>), typeof(TokenProvider<>));
+
+    public static IServiceCollection AddTokenAccessorHandler(this IServiceCollection services, Type handlerType)
+        => services.AddScoped(handlerType);
 }

@@ -3,15 +3,22 @@ namespace ExtTokenManager;
 /// <inheritdoc />
 public class TokenProvider<TService> : ITokenProvider<TService> where TService : class
 {
+    private readonly ITokenAccessor _tokenAccessor;
+
+    public TokenProvider(ITokenAccessor tokenAccessor)
+    {
+        _tokenAccessor = tokenAccessor;
+    }
+
     /// <inheritdoc />
     public string GetToken()
     {
-        return TokenAccessor.GetTokenFor<TService>();
+        return _tokenAccessor.GetTokenFor<TService>();
     }
 
     /// <inheritdoc />
     public string RefreshNowAndGetToken()
     {
-        return TokenAccessor.GetTokenFor<TService>(true);
+        return _tokenAccessor.GetTokenFor<TService>(true);
     }
 }

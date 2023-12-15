@@ -1,12 +1,20 @@
 using ExtTokenManager.Exceptions;
+using ExtTokenManager.Handler;
 using ExtTokenManager.Model;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ExtTokenManager;
 
 /// <inheritdoc />
 public class TokenAccessor : ITokenAccessor
 {
-    private static readonly List<ServiceTokenRecord> Storage = new();
+    private readonly IServiceProvider _serviceProvider;
+    private static readonly List<ServiceTokenRecord> Configs = new();
+
+    public TokenAccessor(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
 
     /// <inheritdoc />
     public void AddTokenFor<TService>(
@@ -14,21 +22,18 @@ public class TokenAccessor : ITokenAccessor
         Func<string, Task<TokenWithRefresh>>? refreshTokenFunc,
         TimeSpan? lifetime) where TService : class
     {
-        if (Storage.Any(x => x.ServiceType == typeof(TService)))
+        if (Configs.Any(x => x.ServiceType == typeof(TService)))
             throw new ServiceAlreadyRegisteredException(typeof(TService));
-        DateTime? dueDate = null;
-        if (lifetime.HasValue)
-            dueDate = DateTime.Now + lifetime.Value;
 
-        var tokenWithRefresh = GetTokenPrivate(getTokenFunc).Result;
-        var newRecord = new ServiceTokenRecord(
+        Configs.Add(new ServiceTokenRecord(
             typeof(TService),
-            tokenWithRefresh,
+            GetTokenPrivate(getTokenFunc).Result,
+            null,
             refreshTokenFunc,
-            dueDate,
-            lifetime);
-        Storage.Add(newRecord);
+            GetDueDate(lifetime),
+            lifetime));
     }
+
 
     /// <inheritdoc />
     public void AddTokenFor<TService>(ExternalTokenConfiguration configuration) where TService : class
@@ -39,6 +44,29 @@ public class TokenAccessor : ITokenAccessor
             configuration.Lifetime);
     }
 
+    public void AddTokenFor<TService>(Type handlerType) where TService : class
+    {
+        if (handlerType.IsAbstract || handlerType.IsClass == false || typeof(ITokenAccessorHandler).IsAssignableFrom(handlerType) == false)
+            throw new ArgumentException($"{nameof(handlerType)} should be a class and implement the interface {nameof(ITokenAccessorHandler)}.");
+
+        using var scope = _serviceProvider.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService(handlerType) as ITokenAccessorHandler;
+        if (handler is null)
+            throw new ArgumentException($"Can`t get an instance of type {handlerType}");
+
+        if (Configs.Any(x => x.ServiceType == typeof(TService)))
+            throw new ServiceAlreadyRegisteredException(typeof(TService));
+
+        var lifetime = handler.GetLifeTime().Result;
+        Configs.Add(new ServiceTokenRecord(
+            typeof(TService),
+            handler.GetToken().Result,
+            handlerType,
+            null,
+            GetDueDate(lifetime),
+            lifetime));
+    }
+
     /// <summary>
     /// Obtains the token for the service.
     /// </summary>
@@ -46,31 +74,46 @@ public class TokenAccessor : ITokenAccessor
     /// <exception cref="ServiceWasNotRegisteredException">When an accessor has not been registered for this service.</exception>
     /// <exception cref="ArgumentNullException">When the token refresh function was not provided, but it is required.</exception>
     /// <exception cref="CantGetTokenException">When the token acquisition fails.</exception>
-    internal static string GetTokenFor<TService>(bool forceUpdate = false)
+    public string GetTokenFor<TService>(bool forceUpdate = false) where TService : class
     {
-        // get record
-        var record = Storage.FirstOrDefault(x => x.ServiceType == typeof(TService));
-        if (record is null)
+        // get record 
+        var config = Configs.FirstOrDefault(x => x.ServiceType == typeof(TService));
+        if (config is null)
             throw new ServiceWasNotRegisteredException(typeof(TService));
 
         // check for date
         var now = DateTime.Now;
-        if (record.DueDate > now && forceUpdate == false)
-            return record.TokenWithRefresh.Token;
+        if (config.DueDate > now && forceUpdate == false)
+            return config.TokenWithRefresh.Token;
 
-        if (record.RefreshTokenFunc is null)
-            throw new ArgumentNullException(nameof(record.RefreshTokenFunc), "Refresh function must be passed if lifetime exists");
-        if (record.TokenWithRefresh.RefreshToken is null)
-            throw new ArgumentNullException(nameof(record.RefreshTokenFunc), "Refresh token can not be null");
+        TokenWithRefresh newToken;
+        var newDueDate = now + config.Lifetime;
 
-        var newToken = RefreshTokenPrivate(record.RefreshTokenFunc, record.TokenWithRefresh.RefreshToken).Result;
-        var newRecord = record with { TokenWithRefresh = newToken };
-        if (record.Lifetime.HasValue)
-            newRecord = newRecord with { DueDate = now + record.Lifetime.Value };
-        Storage.Remove(record);
-        Storage.Add(newRecord);
+        if (config.TokenWithRefresh.RefreshToken is null)
+            throw new ArgumentNullException(nameof(config.RefreshTokenFunc), "Refresh token can not be null");
+
+        if (config.HandlerType is not null)
+        {
+            var scope = _serviceProvider.CreateScope();
+            if (scope.ServiceProvider.GetRequiredService(config.HandlerType) is not ITokenAccessorHandler handler)
+                throw new ArgumentException($"Can`t get an instance of type {config.HandlerType}");
+            newToken = handler.RefreshToken(config.TokenWithRefresh.RefreshToken).Result;
+        }
+        else if (config.RefreshTokenFunc is null)
+            throw new ArgumentNullException(nameof(config.RefreshTokenFunc), "Refresh function must be passed if lifetime exists");
+        else
+        {
+            newToken = RefreshTokenPrivate(config.RefreshTokenFunc, config.TokenWithRefresh.RefreshToken).Result;
+        }
+
+        var newRecord = config with { TokenWithRefresh = newToken, DueDate = newDueDate };
+        Configs.Remove(config);
+        Configs.Add(newRecord);
         return newRecord.TokenWithRefresh.Token;
     }
+
+    private static DateTime? GetDueDate(TimeSpan? lifetime)
+        => lifetime.HasValue ? DateTime.Now + lifetime.Value : null;
 
     private static async Task<TokenWithRefresh> GetTokenPrivate(Func<Task<TokenWithRefresh>> getTokenFunc)
     {

@@ -23,4 +23,8 @@ public interface ITokenAccessor
     /// <param name="configuration">Token acquisition and refresh configuration.</param>
     /// <typeparam name="TService">Service utilizing this token.</typeparam>
     void AddTokenFor<TService>(ExternalTokenConfiguration configuration) where TService : class;
+
+    void AddTokenFor<TService>(Type handlerType) where TService : class;
+
+    internal string GetTokenFor<TService>(bool forceUpdate = false) where TService : class;
 }
