@@ -23,6 +23,7 @@ services.UseExtTokenManager();
 
 ## Initialize
 ```csharp
+var tokentAccessor = serviceProvider.GetRequiredService<ITokenAccessor>();
 tokenAccessor.AddTokenFor<ITestService>(
     // get token function
     () =>
@@ -63,6 +64,8 @@ var token = _tokenProvider.GetToken();
 ```csharp
 var token = _tokenProvider.RefreshNowAndGetToken();
 ```
+
+See full [Demo](https://github.com/MaratPavlov/ExtTokenManager/tree/main/Demo)
 
 # Contribution
 

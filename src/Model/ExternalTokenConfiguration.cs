@@ -7,6 +7,6 @@ namespace ExtTokenManager.Model;
 /// <param name="RefreshTokenFunc">Token refresh function.</param>
 /// <param name="Lifetime">Token lifespan.</param>
 public record ExternalTokenConfiguration(
-    Func<TokenWithRefresh> GetTokenFunc,
-    Func<string, TokenWithRefresh>? RefreshTokenFunc,
+    Func<Task<TokenWithRefresh>> GetTokenFunc,
+    Func<string, Task<TokenWithRefresh>>? RefreshTokenFunc,
     TimeSpan? Lifetime);

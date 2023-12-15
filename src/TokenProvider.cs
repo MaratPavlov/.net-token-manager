@@ -9,6 +9,7 @@ public class TokenProvider<TService> : ITokenProvider<TService> where TService :
         return TokenAccessor.GetTokenFor<TService>();
     }
 
+    /// <inheritdoc />
     public string RefreshNowAndGetToken()
     {
         return TokenAccessor.GetTokenFor<TService>(true);

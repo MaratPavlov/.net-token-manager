@@ -18,16 +18,16 @@ refreshTokenBuilder.Append("init_refresh_token_");
 
 tokenAccessor.AddTokenFor<ITestService>(
     // get token function
-    () => new TokenWithRefresh(TokenGenerator.GenerateToken(), TokenGenerator.GenerateToken()),
+    () => Task.FromResult(new TokenWithRefresh(TokenGenerator.GenerateToken(), TokenGenerator.GenerateToken())),
     // refresh token function
     refreshToken =>
     {
         refreshTokenBuilder.Append("test");
         refreshTokenBuilder.Append(refreshToken);
-        return new TokenWithRefresh(refreshTokenBuilder.ToString(), refreshToken);
+        return Task.FromResult(new TokenWithRefresh(refreshTokenBuilder.ToString(), refreshToken));
     },
     // lifespan of token
-    TimeSpan.FromSeconds(3));
+    TimeSpan.FromSeconds(10));
 
 var testService = scope.ServiceProvider.GetRequiredService<ITestService>();
 while (true)

@@ -1,3 +1,5 @@
+using ExtTokenManager.Exceptions;
+
 namespace ExtTokenManager;
 
 /// <summary>
@@ -7,14 +9,18 @@ namespace ExtTokenManager;
 public interface ITokenProvider<TService>
 {
     /// <summary>
-    /// Issuance.
+    /// Obtains the token for the service.
     /// </summary>
-    /// <returns>The token</returns>
+    /// <exception cref="ServiceWasNotRegisteredException">When an accessor has not been registered for this service.</exception>
+    /// <exception cref="ArgumentNullException">When the token refresh function was not provided, but it is required.</exception>
+    /// <exception cref="CantGetTokenException">When the token acquisition fails.</exception>
     string GetToken();
 
     /// <summary>
-    /// Issuance with force refresh.
+    /// Obtains the token, but through refreshing.
     /// </summary>
-    /// <returns>The token</returns>
+    /// <exception cref="ServiceWasNotRegisteredException">When an accessor has not been registered for this service.</exception>
+    /// <exception cref="ArgumentNullException">When the token refresh function was not provided, but it is required.</exception>
+    /// <exception cref="CantGetTokenException">When the token acquisition fails.</exception>
     string RefreshNowAndGetToken();
 }

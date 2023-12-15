@@ -10,8 +10,8 @@ public class TokenAccessor : ITokenAccessor
 
     /// <inheritdoc />
     public void AddTokenFor<TService>(
-        Func<TokenWithRefresh> getTokenFunc,
-        Func<string, TokenWithRefresh>? refreshTokenFunc,
+        Func<Task<TokenWithRefresh>> getTokenFunc,
+        Func<string, Task<TokenWithRefresh>>? refreshTokenFunc,
         TimeSpan? lifetime) where TService : class
     {
         if (Storage.Any(x => x.ServiceType == typeof(TService)))
@@ -20,7 +20,7 @@ public class TokenAccessor : ITokenAccessor
         if (lifetime.HasValue)
             dueDate = DateTime.Now + lifetime.Value;
 
-        var tokenWithRefresh = GetTokenInternal(getTokenFunc);
+        var tokenWithRefresh = GetTokenPrivate(getTokenFunc).Result;
         var newRecord = new ServiceTokenRecord(
             typeof(TService),
             tokenWithRefresh,
@@ -39,6 +39,13 @@ public class TokenAccessor : ITokenAccessor
             configuration.Lifetime);
     }
 
+    /// <summary>
+    /// Obtains the token for the service.
+    /// </summary>
+    /// <param name="forceUpdate">If refresh is required first.</param>
+    /// <exception cref="ServiceWasNotRegisteredException">When an accessor has not been registered for this service.</exception>
+    /// <exception cref="ArgumentNullException">When the token refresh function was not provided, but it is required.</exception>
+    /// <exception cref="CantGetTokenException">When the token acquisition fails.</exception>
     internal static string GetTokenFor<TService>(bool forceUpdate = false)
     {
         // get record
@@ -56,7 +63,7 @@ public class TokenAccessor : ITokenAccessor
         if (record.TokenWithRefresh.RefreshToken is null)
             throw new ArgumentNullException(nameof(record.RefreshTokenFunc), "Refresh token can not be null");
 
-        var newToken = RefreshTokenInternal(record.RefreshTokenFunc, record.TokenWithRefresh.RefreshToken);
+        var newToken = RefreshTokenPrivate(record.RefreshTokenFunc, record.TokenWithRefresh.RefreshToken).Result;
         var newRecord = record with { TokenWithRefresh = newToken };
         if (record.Lifetime.HasValue)
             newRecord = newRecord with { DueDate = now + record.Lifetime.Value };
@@ -65,12 +72,12 @@ public class TokenAccessor : ITokenAccessor
         return newRecord.TokenWithRefresh.Token;
     }
 
-    private static TokenWithRefresh GetTokenInternal(Func<TokenWithRefresh> getTokenFunc)
+    private static async Task<TokenWithRefresh> GetTokenPrivate(Func<Task<TokenWithRefresh>> getTokenFunc)
     {
         TokenWithRefresh token;
         try
         {
-            token = getTokenFunc();
+            token = await getTokenFunc();
         }
         catch (Exception e)
         {
@@ -80,12 +87,12 @@ public class TokenAccessor : ITokenAccessor
         return token;
     }
 
-    private static TokenWithRefresh RefreshTokenInternal(Func<string, TokenWithRefresh> getTokenFunc, string refreshToken)
+    private static async Task<TokenWithRefresh> RefreshTokenPrivate(Func<string, Task<TokenWithRefresh>> getTokenFunc, string refreshToken)
     {
         TokenWithRefresh token;
         try
         {
-            token = getTokenFunc(refreshToken);
+            token = await getTokenFunc(refreshToken);
         }
         catch (Exception e)
         {

@@ -14,7 +14,7 @@ public interface ITokenAccessor
     /// <param name="refreshTokenFunc">Token refresh function.</param>
     /// <param name="lifetime">Token lifespan.</param>
     /// <typeparam name="TService">Service utilizing this token.</typeparam>
-    void AddTokenFor<TService>(Func<TokenWithRefresh> getTokenFunc, Func<string, TokenWithRefresh>? refreshTokenFunc, TimeSpan? lifetime)
+    void AddTokenFor<TService>(Func<Task<TokenWithRefresh>> getTokenFunc, Func<string, Task<TokenWithRefresh>>? refreshTokenFunc, TimeSpan? lifetime)
         where TService : class;
 
     /// <summary>
